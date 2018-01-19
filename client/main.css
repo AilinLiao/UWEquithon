@@ -1,0 +1,164 @@
+/* CSS declarations go here */
+
+html, body {
+    height: 100%;
+}
+#main {
+    height: 100%;
+}
+
+.equithon-logo {
+    height: 90px;
+    padding: 5px;
+    width: auto;
+    margin: 0 auto;
+}
+
+#app {
+    width: auto;
+    height: auto;
+}
+
+#app-body {
+    display: grid;
+    grid-row-gap: 50px;
+    /*grid-column-gap: 15px;*/
+
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: auto;
+    grid-template-areas:
+        ". subtext-row ."
+        ". title-row ."
+        ". info-row ."
+        ". quote-row ."
+        ". faq-row ."
+        ". footer ."; /* For extra spacing */
+
+    padding-top: 110px
+}
+
+#title-row-image {
+    height: 300px;
+}
+
+#info-row-image {
+    height: 300px;
+}
+
+#main-textbox {
+    gridArea: right;
+
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-row-gap: 5px;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.image-card {
+    margin-left: inherit;
+    margin-right: inherit;
+}
+
+.split-column-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "left right";
+}
+
+.subtext-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-template-areas: "left right";
+    grid-column-gap: 2px;
+}
+
+.social-media-buttons {
+    display: grid;
+    max-width: 400px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "email social";
+}
+
+.faq-card {
+    margin: auto;
+    width: 600px;
+}
+
+@media screen and (min-width: 1440px) { /* Larger screens */
+    #app-body {
+        grid-template-columns: 20% 60% 20%;
+    }
+}
+
+@media screen and (max-width: 600px) { /* Mobile screens */
+    #appbar {
+        height: 60px;
+    }
+    .equithon-logo {
+        height: 50px;
+    }
+
+    .split-column-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "left"
+            "right";
+        grid-row-gap: 5px;
+    }
+
+    .image-card {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .social-media-buttons {
+        display: grid;
+        max-width: 600px;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "email"
+            "social";
+    }
+
+    .subtext-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    #title-row {
+        margin-top: -60px;
+    }
+
+    #main-textbox {
+        padding: 5px;
+    }
+
+    .centered-mobile {
+        align-content: center;
+    }
+
+    #app-body {
+        display: grid;
+        grid-row-gap: 20px;
+
+        grid-template-columns: 100%;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "subtext-row"
+            "title-row"
+            "info-row"
+            "quote-row"
+            "faq-row"
+            "footer"; /* For extra spacing */
+
+        padding-top: 60px;
+    }
+
+    .faq-card {
+        min-width: 200px;
+        width: 100%;
+    }
+}
