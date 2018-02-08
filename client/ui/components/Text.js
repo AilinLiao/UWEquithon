@@ -16,6 +16,8 @@ import { withTheme } from 'material-ui/styles';
  * - type
  * - align
  * - text
+ * - style
+ * - className
  */
 class Text extends Component {
   constructor(props) {
@@ -25,7 +27,8 @@ class Text extends Component {
   modifyStyling(type) {
     switch (type) {
       //case 'display4':
-      //case 'display3':
+      case 'display3':
+        return { fontSize: '11vw' };
       case 'display2':
         return { fontSize: '10vw' };
       case 'display1':
@@ -55,27 +58,27 @@ class Text extends Component {
           { (matches) => {
             if (matches) {
               return(
-              <Typography
-                className={this.props.className}
-                style={Object.assign(this.modifyStyling(this.props.type), this.props.style)}
-                color={this.props.color}
-                type={this.props.type}
-                align={this.props.align}
-                // We want to be able to insert HTML into this modified typography. Dangerous?
-                dangerouslySetInnerHTML={{__html: this.props.text}}
-              />
+                <Typography
+                  className={this.props.className}
+                  style={Object.assign(this.modifyStyling(this.props.type), this.props.style)}
+                  color={this.props.color}
+                  type={this.props.type}
+                  align={this.props.align}
+                >
+                  {this.props.text}
+                </Typography>
               );
             } else {
               return(
-              <Typography
-                className={this.props.className}
-                style={this.props.style}
-                color={this.props.color}
-                type={this.props.type}
-                align={this.props.align}
-                // We want to be able to insert HTML into this modified typography. Dangerous?
-                dangerouslySetInnerHTML={{__html: this.props.text}}
-              />
+                <Typography
+                  className={this.props.className}
+                  style={this.props.style}
+                  color={this.props.color}
+                  type={this.props.type}
+                  align={this.props.align}
+                >
+                  {this.props.text}
+                </Typography>
               );
             }
           }}

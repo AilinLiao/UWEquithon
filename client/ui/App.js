@@ -1,18 +1,26 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Session } from 'meteor/session';
+import { Tracker } from 'meteor/tracker';
+
 import MediaQuery from 'react-responsive';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
-import {MuiThemeProvider, createMuiTheme} from 'material-ui/styles';
-import purple from 'material-ui/colors/purple';
-import indigo from 'material-ui/colors/indigo';
-import {Card, CardMedia, Paper} from "material-ui";
-import Button from 'material-ui/Button';
+import {MuiThemeProvider} from 'material-ui/styles';
+import {Card, CardContent, CardMedia} from "material-ui";
 
-import { theme } from '/client/ui/CustomTheme.js';
 import HomeAppBar from '/client/ui/components/HomeAppBar.js';
+import { theme } from '/client/ui/CustomTheme.js';
 import Text from '/client/ui/components/Text.js';
 import {Facebook, Twitter, Instagram} from '/client/ui/buttons/SocialMedia.js';
 import SubscriptionModal from '/client/ui/components/SubscriptionModal.js';
+import UnsubscribeModal from '/client/ui/components/UnsubscribeModal.js';
+import Login from '/client/ui/components/Login.js';
+import Signup from '/client/ui/components/Signup.js';
+import Apply from '/client/ui/components/Apply.js';
 import FaqCard from '/client/ui/components/FaqCard.js';
+import FlatColoredButton from '/client/ui/buttons/FlatColoredButton.js';
+import Home from '/client/ui/Home.js';
+import Accounts from '/client/ui/components/Accounts.js';
 
 
 const imageElevation = 7;
@@ -23,119 +31,188 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            subModalOpen: false
+            subModalOpen: false,
+            unsubModalOpen: false,
+
+            userId: '',
         };
+
+        this.userIdComputation = undefined;
     };
 
-    handleOpen = () => {
+    componentDidMount() {
+        this.userIdComputation = Tracker.autorun(() => {
+            Meteor.subscribe('userData');
+            let userId = Meteor.userId();
+            if (userId) this.setState({
+                userId: userId,
+            });
+            else this.setState({
+                userId: '',
+            });
+        });
+    }
+
+    componentWillUnmount() {
+        this.userIdComputation.stop();
+    }
+
+    handleSubModalOpen = () => {
         this.setState({
-            subModalOpen: true
+            subModalOpen: true,
+            unsubModalOpen: false,
+        });
+    };
+
+    handleUnsubModalOpen = () => {
+        this.setState({
+            subModalOpen: false,
+            unsubModalOpen: true,
         });
     };
 
     handleClose = () => {
         this.setState({
-            subModalOpen: false
+            subModalOpen: false,
+            unsubModalOpen: false,
         });
     };
 
-    render() {
-        return (
-            <MuiThemeProvider theme={theme}>
-                <div id="app">
-                    <HomeAppBar/>
+    renderAppBody() {
+        return(
+            <div id="app">
+                <HomeAppBar />
+                <div id="app-body">
+                    {/* SubText */}
+                    <SubTextBox />
 
-                    <div id="app-body">
-                        {/* SubText */}
-                        <SubTextBox />
-
-                        {/* Title Row */}
-                        <div id="title-row" className="split-column-row" style={{ gridArea: 'title-row', gridColumnGap: '20px', alignItems: 'center' }}>
-                            <div style={{ gridArea: 'left' }}>
-                                {/*  */}
-                                <MediaQuery maxDeviceWidth={600}>
-                                    { (matches) => {
-                                        let id = "title-row-image";
-                                        let titleRowImage = "/images/code-illustration.png";
-                                        return (matches) ? <ImageCard id={id} image={titleRowImage} style={{ marginTop: '-20px'}} /> :
-                                                           <img style={{ width: '100%' }} src="/images/code-illustration.png" />
-                                    }}
-                                </MediaQuery>
-                            </div>
-
-                            <div id="main-textbox">
-                                <MediaQuery maxDeviceWidth={600}>
-                                    { (matches) => {
-                                        if (matches) return(
-                                                <Card style={{ padding: '20px 15px 20px 15px', marginTop: '-20px'}}>
-                                                    <TitleRowText align="center" />
-                                                </Card>
-                                        );
-                                        else return <TitleRowText align="left" />;
-                                    }}
-                                </MediaQuery>
-
-                                <br/>
-                                <div className='social-media-buttons'>
-                                    <div style={{gridArea: 'email', padding: '10px', width: 'auto', textAlign: 'center'}}>
-                                        <Button style={{ background: theme.palette.primary[500], borderRadius: '25px' }}
-                                                color="contrast" onClick={this.handleOpen}>Stay Posted</Button>
-
-                                        <SubscriptionModal open={this.state.subModalOpen} onClose={this.handleClose} />
-                                    </div>
-
-                                    <div style={{gridArea: 'social', display: 'inline', width: 'auto', textAlign: 'center'}}>
-                                        {Facebook()}
-                                        {Twitter()}
-                                        {Instagram()}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Info Row */}
-                        <div className="split-column-row" style={{gridArea: 'info-row', gridColumnGap: '20px', alignItems: 'center'}}>
-                            <div className="centered-mobile" style={{gridArea: 'left'}}>
-                                <MediaQuery maxDeviceWidth={600}>
-                                    { (matches) => (matches) ? <InfoRowText align="center" /> :
-                                                               <InfoRowText style={{ paddingLeft: '10%', paddingRight: '10%' }} align="left" /> }
-                                </MediaQuery>
-                            </div>
-
-                            <div style={{gridArea: 'right'}}>
-                                <MediaQuery maxDeviceWidth={600}>
-                                    { (matches) => (matches) ?
-                                        <ImageCard id="info-row-image" image="/images/code.jpg"
-                                            style={{ marginLeft: '-10px', marginRight: '-10px'}}
-                                        /> :
-                                        <img src="/images/code.jpg" style={{ width: '100%' }} />
-                                    }
-                                </MediaQuery>
-                            </div>
-                        </div>
-
-                        {/* Quote Row */}
-                        <div style={{gridArea: 'quote-row', justifySelf: 'center'}}>
+                    {/* Title Row */}
+                    <div id="title-row" className="split-column-row" style={{ gridArea: 'title-row', gridColumnGap: '20px', alignItems: 'center' }}>
+                        <div style={{ gridArea: 'left' }}>
+                            {/*  */}
                             <MediaQuery maxDeviceWidth={600}>
                                 { (matches) => {
-                                    if (matches) return(
-                                        <Card style={{ padding: '20px 15px 20px 15px', marginTop: '-30px'}}>
-                                            <QuoteRowText type="headline" />
-                                        </Card>
-                                    );
-                                    else return <QuoteRowText type="display1" />;
+                                    let id = "title-row-image";
+                                    return (matches) ? <ImageCard id={id} image="/images/code-illustration.png" style={{ marginTop: '-20px'}} /> :
+                                                       <img style={{ width: '100%' }} src="/images/code-illustration.png" />
                                 }}
                             </MediaQuery>
                         </div>
 
-                        {/* FAQ Row */}
-                        <div style={{gridArea: 'faq-row', justifySelf: 'center'}}>
-                            <Text color="primary" type="display2" align="center" text="Frequently Asked Questions" />
+                        <div id="main-textbox">
+                            <MediaQuery maxDeviceWidth={600}>
+                                { (matches) => {
+                                    if (matches) return(
+                                            <Card style={{ padding: '20px 15px 20px 15px', marginTop: '-20px'}}>
+                                                <TitleRowText align="center" />
+                                            </Card>
+                                    );
+                                    else return <TitleRowText align="left" />;
+                                }}
+                            </MediaQuery>
+
                             <br/>
-                            <FAQ />
+                            <div className='social-media-buttons'>
+                                <div style={{gridArea: 'email', padding: '10px', width: 'auto', textAlign: 'center'}}>
+                                    <FlatColoredButton onClick={this.handleSubModalOpen} content="Stay Posted" />
+                                    <SubscriptionModal open={this.state.subModalOpen} onClose={this.handleClose} />
+                                </div>
+
+                                <div style={{gridArea: 'social', display: 'inline', width: 'auto', textAlign: 'center'}}>
+                                    {Facebook()}
+                                    {Twitter()}
+                                    {Instagram()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Info Row */}
+                    <div className="split-column-row" style={{gridArea: 'info-row', gridColumnGap: '20px', alignItems: 'center'}}>
+                        <div className="centered-mobile" style={{gridArea: 'left'}}>
+                            <MediaQuery maxDeviceWidth={600}>
+                                { (matches) => (matches) ? <InfoRowText align="center" /> :
+                                    <InfoRowText style={{ paddingLeft: '10%', paddingRight: '10%' }} align="left" />
+                                }
+                            </MediaQuery>
+                        </div>
+
+                        <div style={{gridArea: 'right'}}>
+                            <MediaQuery maxDeviceWidth={600}>
+                                { (matches) => (matches) ?
+                                    <ImageCard id="info-row-image" image="/images/group-computing-small.png"
+                                        style={{ marginLeft: '-10px', marginRight: '-10px'}}
+                                    /> :
+                                    <img src="/images/group-computing-small.png" style={{ width: '100%' }} />
+                                }
+                            </MediaQuery>
+                        </div>
+                    </div>
+
+                    {/* Quote Row */}
+                    <div style={{gridArea: 'quote-row', justifySelf: 'center'}}>
+                        <MediaQuery maxDeviceWidth={600}>
+                            { (matches) => {
+                                if (matches) return(
+                                    <Card style={{ marginTop: '-30px' }}>
+                                        <CardContent>
+                                            <QuoteRowText />
+                                        </CardContent>
+                                    </Card>
+                                );
+                                else return(
+                                    <Card className="split-column-row">
+                                        <CardContent style={{ gridArea: 'left' }}>
+                                            <QuoteRowText />
+                                        </CardContent>
+                                        <CardMedia style={{ gridArea: 'right' }} image="/images/feridun_crop.jpg" title="Feridun Hamdullahpur" />
+                                    </Card>
+                                );
+                            }}
+                        </MediaQuery>
+                    </div>
+
+                    {/* FAQ Row */}
+                    <div style={{gridArea: 'faq-row', justifySelf: 'center'}}>
+                        <Text color="primary" type="display2" align="center" text="Frequently Asked Questions" />
+                        <br/>
+                        <FAQ />
+                    </div>
+
+                    {/* Footer */}
+                    <div className="footer split-column-row">
+                        <div style={{ textAlign: 'center' }}>
+                            <img src="/logos/logo_200x153.png" style={{ width: '100px' }} />
+                        </div>
+                        <div style={{ margin: 'auto', textAlign: 'center' }}>
+                            <Text color="secondary" type="body2" text={ <p>Contact us: <a href="mailto:hello@equithon.org">hello@equithon.org</a> </p> } />
+                            <Text color="secondary" type="body2" text="University of Waterloo" />
+                            <Text color="secondary" type="body2"
+                                text={ <a href="#" onClick={this.handleUnsubModalOpen}><u>Unsubscribe</u></a> }
+                            />
+                            <UnsubscribeModal open={this.state.unsubModalOpen} onClose={this.handleClose} />
                         </div>
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <MuiThemeProvider theme={theme}>
+              <Router>
+                  <div style={{ width: 'inherit', height: 'inherit' }}>
+                      {/* Home page */}
+                      <Route exact path="/" render={ () => this.renderAppBody() } />
+
+                      {/* Route to application */}
+                      <Route path="/apply" component={Apply} />
+
+                      {/* Render accounts */}
+                      <Route path="/accounts" component={Accounts} />
+                  </div>
+              </Router>
             </MuiThemeProvider>
         );
     }
@@ -150,7 +227,7 @@ export default class App extends Component {
  */
 const TitleRowText = ({ align }) => (
     <Text color="primary" type="display2" align={align}
-          text="Waterloo's biggest social innovation hackathon is coming back in May 2018."
+          text="Applications for Equithon 2018 are open now!"
     />
 );
 
@@ -171,13 +248,15 @@ const InfoRowText = ({ align, style }) => (
 /*
  * Text to be displayed in the quote row.
  */
-const QuoteRowText = ({ type }) => (
+const QuoteRowText = () => (
     <div>
-        <i><Text color="primary" type={type} align="left"
-                 text="&quotEquity isn't a women's issue,<br/>Equity is an everyone issue.&quot"
-        /></i>
+        <Text color="primary" type="headline" align="left"
+            text={ <i><div>"Equity isn't a women's issue,<br/>Equity is an everyone issue."</div></i> }
+        />
         <br/>
-        <Text color="primary" type="subheading" align="right" text="Feridun Hamdullahpur,<br/> President and Vice-Chancellor" />
+        <Text color="primary" type="subheading" align="right"
+            text={ <div>Feridun Hamdullahpur<br/>President and Vice-Chancellor,<br/>University of Waterloo</div> }
+        />
     </div>
 );
 
@@ -201,7 +280,7 @@ const SubTextBox = () => (
     <MediaQuery maxDeviceWidth={600}>
         { (matches) => {
             let leftTitle  = 'WHEN';
-            let leftBody   = 'May 2018';
+            let leftBody   = 'May 4-6, 2018';
             let rightTitle = 'WHERE';
             let rightBody  = 'University of Waterloo';
             if (matches) return (
@@ -259,7 +338,7 @@ const FAQ = () => (
         <br/>
         <FaqCard
             question="What can I make?"
-            answer="You can make anything that raises awareness of or addresses an issue related to equity - whether it be gender, racial, etc. We will be providing resources leading up to and during Equithon to help you brainstorm."
+            answer="You can make anything that raises awareness of or addresses an issue related to equity in one of five categories. The categories for Equithon 2018 are: Access to Education, LGBTQ+ Rights, Mental Health, Physical Disabilities, and Women Empowerment. We will be providing resources leading up to and during Equithon to help you develop your ideas into a great hack."
             number="3."
         />
         <br/>
@@ -277,14 +356,20 @@ const FAQ = () => (
         <br/>
         <FaqCard
             question="When are applications open?"
-            answer="Applications for hackers will open in Winter 2018."
+            answer="Applications for hackers are open now!"
             number="6."
         />
         <br/>
         <FaqCard
-            question="Have more questions?"
+            question="How can I help with the event?"
+            answer={ <p>Registration for volunteers will open closer to the event, so sign up for our mailing list using the Stay Posted button above and follow us on social media to be notified when it opens! If you are interested in being a mentor, please send us an email at <a href="mailto:hello@equithon.org">hello@equithon.org</a>.</p>}
             number="7."
-            answer='Send us an email at <a href="mailto:hello@equithon.org">hello@equithon.org</a>.' // Iffy syntax but necessary to make link
+        />
+        <br/>
+        <FaqCard
+            question="Have more questions?"
+            number="8."
+            answer={ <p>Send us an email at <a href="mailto:hello@equithon.org">hello@equithon.org</a>.</p> }
         />
     </div>
 );

@@ -105,7 +105,7 @@ class FaqCard extends Component {
 
           <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
             <CardContent>
-                <Text color="secondary" type="body2" text={this.props.answer} />
+              <Text color="secondary" type="body2" text={this.props.answer} />
             </CardContent>
           </Collapse>
         </Card>

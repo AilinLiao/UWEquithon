@@ -8,7 +8,7 @@ export const theme = createMuiTheme({
             200: '#adc1f6',
             300: '#8ca8f2',
             400: '#7395f0',
-            500: '#5a82ed',
+            500: '#5a82ed', // Remember to update the MuiButton override if this changes.
             600: '#527aeb',
             700: '#486fe8',
             800: '#3f65e5',
@@ -36,5 +36,5 @@ export const theme = createMuiTheme({
             A700: '#d0dbf9',
             'contrastDefaultColor': 'light',
         },
-    }
+    },
 });

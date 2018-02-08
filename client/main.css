@@ -1,22 +1,37 @@
 /* CSS declarations go here */
 
-html, body {
+html {
     height: 100%;
 }
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 #main {
-    height: 100%;
+    height: 100vh;
+    width: 100vw;
 }
 
 .equithon-logo {
     height: 90px;
     padding: 5px;
     width: auto;
-    margin: 0 auto;
 }
 
 #app {
-    width: auto;
-    height: auto;
+}
+
+#appbar {
+    height: 100px;
+}
+
+#app-bar-grid {
+    display: grid;
+    grid-template-columns: 40% 20% 20% 20%;
+    grid-template-areas: "application logo signup login-logout";
+    width: 100%;
 }
 
 #app-body {
@@ -34,7 +49,36 @@ html, body {
         ". faq-row ."
         ". footer ."; /* For extra spacing */
 
-    padding-top: 110px
+    padding-top: 110px;
+}
+
+#application-form-wrapper {
+    display: grid;
+
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: auto;
+    grid-template-areas:
+        ". title-row ."
+        ". application-label-row ."
+        ". application-form-row ."
+        ". footer ."; /* For extra spacing */
+
+    padding-top: 110px;
+}
+#application-form {
+    grid-area: application-form-row;
+
+    display: grid;
+    grid-row-gap: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "personal-info-row"
+        "activities-row"
+        "long-answer-row"
+        "submit-row";
+
+    padding: 50px;
 }
 
 #title-row-image {
@@ -46,7 +90,7 @@ html, body {
 }
 
 #main-textbox {
-    gridArea: right;
+    grid-area: right;
 
     display: grid;
     grid-template-rows: auto auto;
@@ -82,12 +126,86 @@ html, body {
 
 .faq-card {
     margin: auto;
-    width: 600px;
+    max-width: 600px;
+    width: 95%;
 }
+
+.footer {
+    grid-area: footer;
+    justify-self: center;
+    max-width: 600px;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+/*
+ * Accounts UI
+ */
+.accounts-background {
+    background: url('/images/group-computing-2.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+.accounts-background-color {
+    background-image: linear-gradient(to bottom, rgba(30, 14, 16, .90), rgba(166, 195, 247, .90));
+
+    min-width: 100vw;
+    min-height: 100vh;
+}
+.accounts-logo {
+    height: 180px;
+}
+.accounts-align-right {
+    text-align: right;
+}
+.accounts-grid {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 1fr auto 1fr;
+    grid-template-areas:
+        ". . ."
+        ". body ."
+        ". footer .";
+
+    position: relative;
+}
+
+.center-screen-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.modal-paper {
+    padding: 50px;
+}
+
+.button-link {
+    text-decoration: none;
+}
+
+/*
+ * For accounts background, we need to make sure we switch to
+ * scaling by height once we have a big enough height.
+ */
+@media screen and (max-aspect-ratio: 5000/3338) { /* Sizes of image used*/
+    .accounts-background {
+        background-size: auto 100%;
+    }
+}
+
 
 @media screen and (min-width: 1440px) { /* Larger screens */
     #app-body {
         grid-template-columns: 20% 60% 20%;
+    }
+    #application-form-wrapper {
+        grid-template-columns: 20% 60% 20%;
+    }
+    .accounts-grid {
+        grid-template-columns: 35% 30% 35%;
     }
 }
 
@@ -140,6 +258,10 @@ html, body {
         align-content: center;
     }
 
+    .modal-paper {
+        padding: 20px;
+    }
+
     #app-body {
         display: grid;
         grid-row-gap: 20px;
@@ -159,6 +281,28 @@ html, body {
 
     .faq-card {
         min-width: 200px;
+    }
+
+    .footer {
         width: 100%;
+    }
+
+    .center-screen-modal {
+        width: 80%;
+    }
+
+    .accounts-logo {
+        height: 80px;
+    }
+    .accounts-align-right {
+        text-align: center;
+    }
+    .accounts-grid {
+        grid-template-columns: 10% auto 10%;
+        grid-template-rows: 1fr auto 1fr;
+    }
+
+    #application-form {
+        padding: 10px;
     }
 }
